@@ -76,10 +76,13 @@ class Gitium_Submenu_Configure extends Gitium_Menu {
 		$git->add_remote_url( $remote_url );
 		$git->fetch_ref();
 		if ( count( $git->get_remote_branches() ) == 0 ) {
+            if ( ! file_exists( "$this->repo_dir/.gitignore") ) {
+	            file_put_contents( "$this->repo_dir/.gitignore", $this->gitignore ); // @TODO move this elsewhere
+            }
 			$git->add( 'wp-content', '.gitignore' );
 			$current_user = wp_get_current_user();
 			$git->commit( __( 'Initial commit', 'gitium' ), $current_user->display_name, $current_user->user_email );
-			if ( ! $git->push( 'master' ) ) {
+			if ( ! $git->push( 'main' ) ) {
 				$git->cleanup();
 				return false;
 			}

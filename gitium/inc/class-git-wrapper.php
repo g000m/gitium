@@ -232,7 +232,7 @@ class Git_Wrapper {
 	}
 
 	function init() {
-		file_put_contents( "$this->repo_dir/.gitignore", $this->gitignore );
+		//file_put_contents( "$this->repo_dir/.gitignore", $this->gitignore ); // @TODO move this elsewhere
 		list( $return, ) = $this->_call( 'init' );
 		$this->_call( 'config', 'user.email', 'gitium@presslabs.com' );
 		$this->_call( 'config', 'user.name', 'Gitium' );
