@@ -1,4 +1,25 @@
 <?php
+/**
+ * Gitium provides automatic git version control and deployment for
+ * your plugins and themes integrated into wp-admin.
+ *
+ * Copyright (C) 2014-2025 PRESSINFRA SRL <ping@presslabs.com>
+ *
+ * Gitium is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Gitium is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Gitium. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package         Gitium
+ */
 
 require_once("repl.php");
 
@@ -42,7 +63,7 @@ class Test_Gitium extends WP_UnitTestCase {
 			'gitium_webhook_key'
 		);
 		foreach ( $deleted_options as $option ) {
-			add_option( $option, True );
+			add_option( $option, true );
 		}
 
 		$deleted_transients = array(
@@ -55,7 +76,7 @@ class Test_Gitium extends WP_UnitTestCase {
 			'gitium_is_status_working',
 		);
 		foreach ( $deleted_transients as $transient ) {
-			set_transient( $transient, True );
+			set_transient( $transient, true );
 		}
 
 		gitium_uninstall_hook();

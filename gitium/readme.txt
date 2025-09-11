@@ -2,13 +2,13 @@
 
 Contributors: PressLabs
 Donate link: https://www.presslabs.com/gitium/
-Tags: git, version, versioning, deployment, version-control, github, bitbucket, travis, code, revision, testing, development, branch, production, staging, debug, plugin, gitium, presslabs, simple
+Tags: git, version control, revision, gitium, presslabs
 Requires at least: 4.7
-Tested up to: 6.6
-Requires PHP: 5.6
-License: GPLv2
-Stable tag: 1.0.7
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tested up to: 6.8
+Requires PHP: 7.4
+License: GPLv3
+Stable tag: 1.2.1
+License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
 Automatic git version control and deployment for your plugins and themes integrated into wp-admin.
 
@@ -122,10 +122,21 @@ Submodules are currently not supported.
 Please report security bugs found in the source code of the Gitium plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/gitium). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 == Upgrade Notice ==
-= 1.0.7 =
-PHP8.1 compatibility, check if gitignore is already defined and add HOME env
+= 1.2.1 =
+Tested up to WP 6.8
 
 == Changelog ==
+
+= 1.2.1 =
+* Tested the compatibility of the plugin with WP 6.8
+
+= 1.2.0 =
+* Changed the license for all files to GPLv3
+* Fix: In some cases, the WP is configured in another folder. We've made some changes on how we check for the wp-load.php file
+
+= 1.1.0 =
+* Fix: In some cases, the website was stuck in maintenance when it was pulling the changes from remote
+* Added: A copy-to-clipboard button was introduced for copying ssh key-pair and webhook url
 
 = 1.0.7 =
 * Fix: HOME env definition;

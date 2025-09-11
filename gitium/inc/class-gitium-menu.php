@@ -1,19 +1,25 @@
 <?php
-/*  Copyright 2014-2016 Presslabs SRL <ping@presslabs.com>
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as
-    published by the Free Software Foundation.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+/**
+ * Gitium provides automatic git version control and deployment for
+ * your plugins and themes integrated into wp-admin.
+ *
+ * Copyright (C) 2014-2025 PRESSINFRA SRL <ping@presslabs.com>
+ *
+ * Gitium is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Gitium is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Gitium. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package         Gitium
+ */
 
 class Gitium_Menu {
 
@@ -67,9 +73,9 @@ class Gitium_Menu {
 		check_admin_referer( 'gitium-admin' );
 		gitium_uninstall_hook();
 		if ( ! $this->git->remove_remote() ) {
-			$this->redirect( __('Could not remove remote.', 'gitium') );
+			$this->redirect( 'Could not remove remote.');
 		}
-		$this->success_redirect( __('You are now disconnected from the repository. New key pair generated.', 'gitium') );
+		$this->success_redirect( 'You are now disconnected from the repository. New key pair generated.' );
 	}
 
 	public function show_message() {
@@ -90,7 +96,7 @@ class Gitium_Menu {
 			<?php
 				wp_nonce_field( 'gitium-admin' );
 		  ?>
-			<input type="submit" name="GitiumSubmitDisconnectRepository" value='<?php _e( 'Disconnect from repo', 'gitium' ); ?>' class="button secondary" onclick="return confirm('<?php _e( 'Are you sure you want to disconnect from the remote repository?', 'gitium' ); ?>')"/>&nbsp;
+			<input type="submit" name="GitiumSubmitDisconnectRepository" value="<?php echo 'Disconnect from repo'; ?>" class="button secondary" onclick="return confirm('<?php echo 'Are you sure you want to disconnect from the remote repository?'; ?>')"/>&nbsp;
 		</form>
 		<?php
 	}

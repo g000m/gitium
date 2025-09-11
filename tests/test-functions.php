@@ -1,4 +1,25 @@
 <?php
+/**
+ * Gitium provides automatic git version control and deployment for
+ * your plugins and themes integrated into wp-admin.
+ *
+ * Copyright (C) 2014-2025 PRESSINFRA SRL <ping@presslabs.com>
+ *
+ * Gitium is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Gitium is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Gitium. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package         Gitium
+ */
 
 class Test_Functions extends WP_UnitTestCase
 {
@@ -15,7 +36,7 @@ class Test_Functions extends WP_UnitTestCase
 	}
 
 	function test_gitium_get_remote_tracking_branch_true() {
-		$this->assertEquals( '', _gitium_get_remote_tracking_branch(True) );
+		$this->assertEquals( '', _gitium_get_remote_tracking_branch(true) );
 	}
 
 	function test_gitium_update_remote_tracking_branch() {
@@ -27,7 +48,7 @@ class Test_Functions extends WP_UnitTestCase
 	}
 
 	function test_gitium_is_status_working_true() {
-		$this->assertFalse( _gitium_is_status_working(True) );
+		$this->assertFalse( _gitium_is_status_working(true) );
 	}
 
 	function test_gitium_update_is_status_working() {

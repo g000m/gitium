@@ -1,19 +1,25 @@
 <?php
-/*  Copyright 2014-2016 Presslabs SRL <ping@presslabs.com>
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as
-    published by the Free Software Foundation.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+/**
+ * Gitium provides automatic git version control and deployment for
+ * your plugins and themes integrated into wp-admin.
+ *
+ * Copyright (C) 2014-2025 PRESSINFRA SRL <ping@presslabs.com>
+ *
+ * Gitium is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * Gitium is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Gitium. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @package         Gitium
+ */
 
 class Gitium_Submenu_Settings extends Gitium_Menu {
 
@@ -29,7 +35,7 @@ class Gitium_Submenu_Settings extends Gitium_Menu {
 		$submenu_hook = add_submenu_page(
 			$this->menu_slug,
 			'Settings',
-			__( 'Settings' ),
+			'Settings',
 			GITIUM_MANAGE_OPTIONS_CAPABILITY,
 			$this->submenu_slug,
 			array( $this, 'page' )
@@ -44,7 +50,7 @@ class Gitium_Submenu_Settings extends Gitium_Menu {
 		}
 		check_admin_referer( 'gitium-settings' );
 		gitium_get_webhook_key( true );
-		$this->success_redirect( __( 'Webhook URL regenerates. Please make sure you update any external references.', 'gitium' ), $this->settings_menu_slug );
+		$this->success_redirect( 'Webhook URL regenerates. Please make sure you update any external references.', $this->settings_menu_slug );
 	}
 
 	public function regenerate_public_key() {
@@ -54,20 +60,25 @@ class Gitium_Submenu_Settings extends Gitium_Menu {
 		}
 		check_admin_referer( 'gitium-settings' );
 		gitium_get_keypair( true );
-		$this->success_redirect( __( 'Public key successfully regenerated.', 'gitium' ), $this->settings_menu_slug );
+		$this->success_redirect( 'Public key successfully regenerated.', $this->settings_menu_slug );
 	}
 
 	private function show_webhook_table_webhook_url() {
 		?>
 		<tr>
-			<th><label for="webhook-url"><?php _e( 'Webhook URL', 'gitium' ); ?>:</label></th>
+			<th><label for="webhook-url"><?php echo 'Webhook URL'; ?>:</label></th>
 			<td>
 			  <p><code id="webhook-url"><?php echo esc_url( gitium_get_webhook() ); ?></code>
-			  <?php if ( ! defined( 'GIT_WEBHOOK_URL' ) || GIT_WEBHOOK_URL == '' ) : ?>
-			  <input type="submit" name="GitiumSubmitRegenerateWebhook" class="button" value="<?php _e( 'Regenerate Webhook', 'gitium' ); ?>" />
-                          <a class="button" href="<?php echo esc_url( gitium_get_webhook() ); ?>" target="_blank">Merge changes</a></p>
-			  <?php endif; ?>
-			  <p class="description"><?php _e( 'Pinging this URL triggers an update from remote repository.', 'gitium' ); ?></p>
+				<?php if ( ! defined( 'GIT_WEBHOOK_URL' ) || GIT_WEBHOOK_URL == '' ) : ?>
+				<input type="submit" name="GitiumSubmitRegenerateWebhook" class="button" value="<?php echo 'Regenerate Webhook'; ?>" />
+							<a class="button" href="<?php echo esc_url( gitium_get_webhook() ); ?>" target="_blank">Merge changes</a></p>
+				<?php endif; ?>
+			  	<p>
+					<div>
+						<button id="copyButton" class="button" data-copy-text="<?php echo esc_url( gitium_get_webhook() ) ?>">Copy Webhook URL</button>
+					</div>
+				</p>
+				<p class="description"><?php echo 'Pinging this URL triggers an update from remote repository.'; ?></p>
 			</td>
 		</tr>
 		<?php
@@ -77,12 +88,12 @@ class Gitium_Submenu_Settings extends Gitium_Menu {
 		list( $git_public_key, ) = gitium_get_keypair();
 		if ( ! defined( 'GIT_KEY_FILE' ) || GIT_KEY_FILE == '' ) : ?>
 			<tr>
-				<th><label for="public-key"><?php _e( 'Public Key', 'gitium' ); ?>:</label></th>
+				<th><label for="public-key"><?php echo 'Public Key'; ?>:</label></th>
 				<td>
 					<p><input type="text" class="regular-text" name="public_key" id="public-key" value="<?php echo esc_attr( $git_public_key ); ?>" readonly="readonly">
-					<input type="submit" name="GitiumSubmitRegeneratePublicKey" class="button" value="<?php _e( 'Regenerate Key', 'gitium' ); ?>" /></p>
-					<p class="description"><?php _e( 'If your code use ssh keybased authentication for git you need to allow write access to your repository using this key.', 'gitium' ); ?><br />
-					<?php _e( 'Checkout instructions for <a href="https://help.github.com/articles/generating-ssh-keys#step-3-add-your-ssh-key-to-github" target="_blank">github</a> or <a href="https://confluence.atlassian.com/display/BITBUCKET/Add+an+SSH+key+to+an+account#AddanSSHkeytoanaccount-HowtoaddakeyusingSSHforOSXorLinux" target="_blank">bitbucket</a>.', 'gitium' ); ?>
+					<input type="submit" name="GitiumSubmitRegeneratePublicKey" class="button" value="<?php echo 'Regenerate Key'; ?>" /></p>
+					<p class="description"><?php echo 'If your code use ssh keybased authentication for git you need to allow write access to your repository using this key.'; ?><br />
+					<?php echo 'Checkout instructions for <a href="https://help.github.com/articles/generating-ssh-keys#step-3-add-your-ssh-key-to-github" target="_blank">github</a> or <a href="https://confluence.atlassian.com/display/BITBUCKET/Add+an+SSH+key+to+an+account#AddanSSHkeytoanaccount-HowtoaddakeyusingSSHforOSXorLinux" target="_blank">bitbucket</a>.'; ?>
 					</p>
 				</td>
 			</tr>
@@ -108,9 +119,9 @@ class Gitium_Submenu_Settings extends Gitium_Menu {
 
 		if ( $this->git->set_gitignore( $gitignore_content ) ) {
 			gitium_commit_and_push_gitignore_file();
-			$this->success_redirect( __( 'The file `.gitignore` is saved!', 'gitium' ), $this->settings_menu_slug );
+			$this->success_redirect( 'The file `.gitignore` is saved!', $this->settings_menu_slug );
 		} else {
-			$this->redirect( __( 'The file `.gitignore` could not be saved!', 'gitium' ), false, $this->settings_menu_slug );
+			$this->redirect(  'The file `.gitignore` could not be saved!', false, $this->settings_menu_slug );
 		}
 	}
 
@@ -118,17 +129,17 @@ class Gitium_Submenu_Settings extends Gitium_Menu {
 		$this->show_message();
 		?>
 		<div class="wrap">
-		<h2><?php _e( 'Gitium Settings', 'gitium' ); ?></h2>
+		<h2><?php echo 'Gitium Settings'; ?></h2>
 
 		<form action="" method="POST">
 		<?php wp_nonce_field( 'gitium-settings' ) ?>
 
-		<p><span style="color:red;"><?php _e( 'Be careful when you modify this list!', 'gitium' ); ?></span></p>
+		<p><span style="color:red;"><?php echo 'Be careful when you modify this list!'; ?></span></p>
 		<textarea name="gitignore_content" rows="20" cols="140"><?php echo esc_html( $this->git->get_gitignore() ); ?></textarea>
 
 		<?php $this->show_webhook_table(); ?>
 		<p class="submit">
-		<input type="submit" name="GitiumSubmitSave" class="button-primary" value="<?php _e( 'Save', 'gitium' ); ?>" />
+		<input type="submit" name="GitiumSubmitSave" class="button-primary" value="<?php echo 'Save'; ?>" />
 		</p>
 
 		</form>
