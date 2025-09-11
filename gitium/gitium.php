@@ -81,6 +81,8 @@ register_activation_hook( __FILE__, '_gitium_make_ssh_git_file_exe' );
 
 function gitium_deactivation() {
 	delete_transient( 'gitium_git_version' );
+	delete_option( 'gitium_push_queue' );
+	wp_clear_scheduled_hook( 'gitium_background_push' );
 }
 register_deactivation_hook( __FILE__, 'gitium_deactivation' );
 
@@ -95,6 +97,8 @@ function gitium_uninstall_hook() {
 
 	delete_option( 'gitium_keypair' );
 	delete_option( 'gitium_webhook_key' );
+	delete_option( 'gitium_push_queue' );
+	wp_clear_scheduled_hook( 'gitium_background_push' );
 }
 register_uninstall_hook( __FILE__, 'gitium_uninstall_hook' );
 

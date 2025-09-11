@@ -248,7 +248,7 @@ if ( ! function_exists( 'gitium_release_merge_lock' ) ) :
 	}
 endif;
 
-// Merges the commits with remote and pushes them back
+// Merges the commits with remote and queues push for background processing
 function gitium_merge_and_push( $commits ) {
 	global $git;
 
@@ -263,8 +263,85 @@ function gitium_merge_and_push( $commits ) {
 
 	gitium_release_merge_lock( $lock );
 
-	return $git->push() && $merge_status;
+	// Queue the push operation for background processing
+	if ( $merge_status ) {
+		gitium_queue_push_operation();
+	}
+
+	return $merge_status;
 }
+
+if ( ! function_exists( 'gitium_queue_push_operation' ) ) :
+	function gitium_queue_push_operation() {
+		// Add a push operation to the queue
+		$push_queue = get_option( 'gitium_push_queue', array() );
+		$push_queue[] = array(
+			'timestamp' => time(),
+			'attempts' => 0,
+			'max_attempts' => 3
+		);
+		update_option( 'gitium_push_queue', $push_queue );
+		
+		// Schedule immediate background processing
+		if ( ! wp_next_scheduled( 'gitium_background_push' ) ) {
+			wp_schedule_single_event( time(), 'gitium_background_push' );
+		}
+	}
+endif;
+
+if ( ! function_exists( 'gitium_process_push_queue' ) ) :
+	function gitium_process_push_queue() {
+		global $git;
+		
+		$push_queue = get_option( 'gitium_push_queue', array() );
+		if ( empty( $push_queue ) ) {
+			return;
+		}
+
+		// Get the first item from queue
+		$push_item = array_shift( $push_queue );
+		$push_item['attempts']++;
+
+		list( , $git_private_key ) = gitium_get_keypair();
+		if ( ! $git_private_key ) {
+			// No key available, remove from queue
+			update_option( 'gitium_push_queue', $push_queue );
+			return;
+		}
+		
+		$git->set_key( $git_private_key );
+		
+		// Attempt to push
+		$push_success = $git->push();
+		
+		if ( $push_success ) {
+			// Success, update queue
+			update_option( 'gitium_push_queue', $push_queue );
+		} else {
+			// Failed, check if we should retry
+			if ( $push_item['attempts'] < $push_item['max_attempts'] ) {
+				// Add back to queue for retry
+				array_unshift( $push_queue, $push_item );
+				update_option( 'gitium_push_queue', $push_queue );
+				
+				// Schedule retry in 30 seconds
+				wp_schedule_single_event( time() + 30, 'gitium_background_push' );
+			} else {
+				// Max attempts reached, log error and continue with queue
+				error_log( 'Gitium: Push failed after ' . $push_item['max_attempts'] . ' attempts: ' . $git->get_last_error() );
+				update_option( 'gitium_push_queue', $push_queue );
+			}
+		}
+		
+		// Process next item if queue is not empty
+		if ( ! empty( $push_queue ) ) {
+			wp_schedule_single_event( time() + 5, 'gitium_background_push' );
+		}
+	}
+endif;
+
+// Hook the background push processor to WordPress cron
+add_action( 'gitium_background_push', 'gitium_process_push_queue' );
 
 function gitium_check_after_event( $plugin, $event = 'activation' ) {
 	global $git;

@@ -150,7 +150,7 @@ class Gitium_Submenu_Status extends Gitium_Menu {
 		if ( $behind_commits > 0 && empty( $local_status[1] ) ) {
 			$this->success_redirect( sprintf( 'Pull done!' ) );
 		} else{
-			$this->success_redirect( sprintf( 'Pushed commit: `%s`', $commitmsg ) );
+			$this->success_redirect( sprintf( 'Committed successfully: `%s`. Push is processing in background.', $commitmsg ) );
 		}
 	}
 
@@ -158,6 +158,7 @@ class Gitium_Submenu_Status extends Gitium_Menu {
 		$branch = $this->git->get_remote_tracking_branch();
 		$ahead  = count( $this->git->get_ahead_commits() );
 		$behind = count( $this->git->get_behind_commits() );
+		$push_queue = get_option( 'gitium_push_queue', array() );
 		?>
 		<p>
 			<?php 
@@ -167,7 +168,12 @@ class Gitium_Submenu_Status extends Gitium_Menu {
 			);
 			?>&nbsp;
 			<?php
-			if ( ! $ahead && ! $behind && empty( $changes ) ) {
+			if ( ! empty( $push_queue ) ) {
+				printf(
+					'%s',
+					esc_html( sprintf( '%d push operation(s) pending in background.', count( $push_queue ) ) )
+				);
+			} elseif ( ! $ahead && ! $behind && empty( $changes ) ) {
 				echo esc_html( 'Everything is up to date' );
 			}
 			if ( $ahead && $behind ) {
