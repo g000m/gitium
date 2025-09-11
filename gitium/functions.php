@@ -248,7 +248,7 @@ if ( ! function_exists( 'gitium_release_merge_lock' ) ) :
 	}
 endif;
 
-// Merges the commits with remote and pushes them back
+// Merges the commits with remote and sets dirty state for background push
 function gitium_merge_and_push( $commits ) {
 	global $git;
 
@@ -263,8 +263,60 @@ function gitium_merge_and_push( $commits ) {
 
 	gitium_release_merge_lock( $lock );
 
-	return $git->push() && $merge_status;
+	// Set dirty state for background push processing
+	if ( $merge_status ) {
+		gitium_set_dirty_state();
+	}
+
+	return $merge_status;
 }
+
+if ( ! function_exists( 'gitium_set_dirty_state' ) ) :
+	function gitium_set_dirty_state() {
+		// Set dirty state flag to indicate push is needed
+		update_option( 'gitium_needs_push', true );
+		
+		// Schedule immediate background processing
+		if ( ! wp_next_scheduled( 'gitium_background_push' ) ) {
+			wp_schedule_single_event( time(), 'gitium_background_push' );
+		}
+	}
+endif;
+
+if ( ! function_exists( 'gitium_process_push' ) ) :
+	function gitium_process_push() {
+		global $git;
+		
+		// Check if push is needed
+		if ( ! get_option( 'gitium_needs_push', false ) ) {
+			return;
+		}
+
+		list( , $git_private_key ) = gitium_get_keypair();
+		if ( ! $git_private_key ) {
+			// No key available, but keep dirty state for later retry
+			wp_schedule_single_event( time() + 30, 'gitium_background_push' );
+			return;
+		}
+		
+		$git->set_key( $git_private_key );
+		
+		// Attempt to push all pending commits
+		$push_success = $git->push();
+		
+		if ( $push_success ) {
+			// Success, clear dirty state
+			delete_option( 'gitium_needs_push' );
+		} else {
+			// Failed, schedule retry in 30 seconds
+			wp_schedule_single_event( time() + 30, 'gitium_background_push' );
+			error_log( 'Gitium: Push failed, will retry: ' . $git->get_last_error() );
+		}
+	}
+endif;
+
+// Hook the background push processor to WordPress cron
+add_action( 'gitium_background_push', 'gitium_process_push' );
 
 function gitium_check_after_event( $plugin, $event = 'activation' ) {
 	global $git;
