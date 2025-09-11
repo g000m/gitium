@@ -158,7 +158,7 @@ class Gitium_Submenu_Status extends Gitium_Menu {
 		$branch = $this->git->get_remote_tracking_branch();
 		$ahead  = count( $this->git->get_ahead_commits() );
 		$behind = count( $this->git->get_behind_commits() );
-		$push_queue = get_option( 'gitium_push_queue', array() );
+		$needs_push = get_option( 'gitium_needs_push', false );
 		?>
 		<p>
 			<?php 
@@ -168,11 +168,8 @@ class Gitium_Submenu_Status extends Gitium_Menu {
 			);
 			?>&nbsp;
 			<?php
-			if ( ! empty( $push_queue ) ) {
-				printf(
-					'%s',
-					esc_html( sprintf( '%d push operation(s) pending in background.', count( $push_queue ) ) )
-				);
+			if ( $needs_push ) {
+				echo esc_html( 'Push operation pending in background.' );
 			} elseif ( ! $ahead && ! $behind && empty( $changes ) ) {
 				echo esc_html( 'Everything is up to date' );
 			}
