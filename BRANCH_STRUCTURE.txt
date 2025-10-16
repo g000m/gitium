@@ -1,0 +1,51 @@
+Branch Structure Visualization
+================================
+
+Before Migration:
+-----------------
+master (origin/master) ──────────> dfe4f2c "Merge branch 'presslabs:master' into master"
+                                     ↓
+                            (contains all user work)
+
+
+After Migration:
+----------------
+main (new) ─────────────────────> dfe4f2c "Merge branch 'presslabs:master' into master"
+                                    ↓
+                           (contains all user work)
+
+master (reset) ─────────────────> 31122e9 "prevent deprecation warnings" (tag: 1.0.6)
+                                    ↓
+                           (mirrors upstream presslabs/gitium)
+
+
+Commit Graph:
+-------------
+* d38004e (HEAD -> copilot/move-commits-to-main)  Add comprehensive verification test script
+* ef84b9a                                          Add PR summary documentation
+* 7005e2e                                          Enhance branch migration documentation
+* 504f90c                                          Add branch migration script and documentation
+* 8171d6d                                          Create main branch with all commits from master
+* 74893aa                                          Initial plan
+* dfe4f2c (origin/master, main)                    Merge branch 'presslabs:master' into master
+* 31122e9 (tag: 1.0.6, master)                     prevent deprecation warnings
+* 3286ee7 (tag: 1.0.5)                             Update readme and version no.
+* 5b37193 (tag: 1.0.4, tag: 1.0.3)                 Update readme.txt
+* ...     (upstream presslabs/gitium history)
+
+
+Key Points:
+-----------
+1. The 'main' branch preserves all user commits and history
+2. The 'master' branch now mirrors the upstream repository
+3. This allows for easier tracking of upstream changes
+4. Users can merge upstream changes into master, then merge master into main
+
+
+To Complete Migration:
+-----------------------
+Run: ./migrate-branches.sh
+
+This will push both branches to GitHub:
+- main branch → new branch on GitHub
+- master branch → force push to reset to upstream
